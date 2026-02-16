@@ -1,0 +1,33 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -g 1000 appuser && \
+    useradd -u 1000 -g appuser -m appuser
+
+WORKDIR /app
+
+COPY docker/requirements/backend.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+    rm /tmp/requirements.txt
+
+COPY framework/ ./framework/
+COPY agents/ ./agents/
+COPY backend/ ./backend/
+COPY frontend/ ./frontend/
+
+RUN chown -R appuser:appuser /app
+
+USER appuser
+
+EXPOSE 10821
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD curl -f http://localhost:10821/health || exit 1
+
+CMD ["python", "-m", "uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "10821"]

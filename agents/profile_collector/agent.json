@@ -1,0 +1,65 @@
+{
+  "name": "User Profile Collection",
+  "id": "profile_collector",
+  "description": "Collects user profile information through a friendly conversation",
+  "version": "1.0.0",
+  "greeting": "Hi! I'd like to help set up your profile. What's your name?",
+  "persona": "friendly and professional assistant",
+
+  "fields": [
+    {
+      "name": "full_name",
+      "type": "string",
+      "required": true,
+      "order": 0,
+      "description": "User's full name",
+      "question": "What is your full name?",
+      "validator": "name",
+      "extraction_hints": ["name", "called", "I'm", "I am"]
+    },
+    {
+      "name": "email",
+      "type": "string",
+      "required": true,
+      "order": 1,
+      "description": "User's email address",
+      "question": "What is your email address?",
+      "validator": "email"
+    },
+    {
+      "name": "phone",
+      "type": "string",
+      "required": true,
+      "order": 2,
+      "description": "User's phone number",
+      "question": "What phone number should we use?",
+      "validator": "phone"
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "required": false,
+      "order": 3,
+      "description": "User's age",
+      "question": "How old are you? Feel free to skip this one if you prefer.",
+      "validator": "number",
+      "validator_config": {
+        "min": 13,
+        "max": 120
+      }
+    },
+    {
+      "name": "interests",
+      "type": "text",
+      "required": false,
+      "order": 4,
+      "description": "User's interests or hobbies",
+      "question": "What are your main interests or hobbies?"
+    }
+  ],
+
+  "completion": {
+    "message": "Your profile has been created successfully, {full_name}! We'll send a confirmation to {email}.",
+    "action": "log"
+  }
+}

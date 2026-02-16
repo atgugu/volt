@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local LLM Agent Framework</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>Agent Framework</h1>
+            <div class="controls">
+                <select id="agent-selector">
+                    <option value="">Select an agent...</option>
+                </select>
+                <button id="create-agent-btn" class="btn-icon" title="Create new agent">+</button>
+                <button id="voice-toggle" class="btn-icon" title="Toggle voice mode">
+                    🎤
+                </button>
+            </div>
+        </header>
+
+        <div id="create-panel" class="create-panel hidden">
+            <textarea id="create-prompt" placeholder="Describe the agent you want to create...&#10;Example: An agent that collects restaurant reservations - name, party size, date, time, and any dietary restrictions" rows="3"></textarea>
+            <div class="create-actions">
+                <button id="create-cancel" class="btn-secondary">Cancel</button>
+                <button id="create-submit" class="btn-primary">Create Agent</button>
+            </div>
+        </div>
+
+        <div id="chat-container">
+            <div id="messages">
+                <div class="message system">
+                    Select an agent above to start a conversation.
+                </div>
+            </div>
+
+            <div id="input-area">
+                <input type="text" id="message-input" placeholder="Type a message..." disabled>
+                <button id="send-btn" disabled>Send</button>
+            </div>
+        </div>
+
+        <div id="status-bar">
+            <span id="status-text">No agent selected</span>
+            <span id="progress-text"></span>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

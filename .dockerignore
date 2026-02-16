@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Models (bind-mounted at runtime)
+models/
+*.gguf
+*.bin
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+
+# Testing
+.pytest_cache/
+tests/
+htmlcov/
+.coverage
+
+# Documentation
+docs/
+*.md
+!docker/requirements/*.txt
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,1 @@
+from framework.factory.agent_factory import generate_agent

@@ -1,0 +1,38 @@
+# =============================================================================
+# Local LLM Agent Framework - Dependencies
+# =============================================================================
+
+# --- Core Framework ---
+langgraph>=0.2.0
+langchain-core>=0.3.0
+pydantic>=2.0.0
+
+# --- Backend API ---
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+httpx>=0.25.0
+websockets>=12.0
+python-multipart>=0.0.6
+
+# --- LLM Inference ---
+llama-cpp-python>=0.2.0
+
+# --- Voice Services (optional) ---
+# Install these if using voice mode (TTS/STT).
+# Models are auto-downloaded on first run.
+# kokoro>=0.0.1        # TTS - Kokoro-82M, 20+ voices, 12x realtime
+# faster-whisper>=1.0  # STT - Whisper Large V3 Turbo, 99 languages
+# soundfile>=0.12.0    # Audio file I/O for voice pipeline
+# numpy>=1.24.0        # Required by audio processing
+
+# --- Persistence ---
+langgraph-checkpoint-sqlite>=2.0.0
+aiosqlite>=0.20.0
+
+# --- Utilities ---
+python-dotenv>=1.0.0
+aiofiles>=23.0.0
+
+# --- Testing ---
+pytest>=7.0.0
+pytest-asyncio>=0.21.0

@@ -1,0 +1,103 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: agent-backend
+    ports:
+      - "${BACKEND_PORT:-10821}:10821"
+    environment:
+      - LLM_ENDPOINT=http://llm:8000
+      - TTS_SERVICE_URL=http://tts:8033
+      - STT_SERVICE_URL=http://stt:8034
+      - BACKEND_PORT=10821
+      - BACKEND_HOST=0.0.0.0
+      - AGENTS_DIR=agents
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - VERBOSE=${VERBOSE:-false}
+    depends_on:
+      llm:
+        condition: service_healthy
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+  llm:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.llm
+    container_name: agent-llm
+    volumes:
+      - ${LLM_MODELS_HOST_DIR:-./models}:/models:ro
+    environment:
+      - LLM_MODEL_PATH=/models/${LLM_MODEL_FILENAME:-model.gguf}
+      - LLM_N_CTX=${LLM_N_CTX:-8192}
+      - LLM_N_GPU_LAYERS=${LLM_N_GPU_LAYERS:--1}
+      - LLM_N_THREADS=${LLM_N_THREADS:-8}
+      - LLM_DEFAULT_MAX_TOKENS=${LLM_DEFAULT_MAX_TOKENS:-1024}
+      - LLM_DEFAULT_TEMP=${LLM_DEFAULT_TEMP:-}
+      - LLM_FLASH_ATTN=${LLM_FLASH_ATTN:-true}
+      - LLM_ENABLE_WARMUP=${LLM_ENABLE_WARMUP:-true}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+  tts:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.tts
+    container_name: agent-tts
+    volumes:
+      - tts-model-cache:/home/appuser/.cache
+    environment:
+      - TTS_SAMPLE_RATE=${TTS_SAMPLE_RATE:-24000}
+      - TTS_DEFAULT_VOICE=${TTS_DEFAULT_VOICE:-af_heart}
+      - TTS_DEFAULT_LANGUAGE=${TTS_DEFAULT_LANGUAGE:-en}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+  stt:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.stt
+    container_name: agent-stt
+    volumes:
+      - stt-model-cache:/home/appuser/.cache/whisper-models
+    environment:
+      - STT_MODELS_DIR=/home/appuser/.cache/whisper-models
+      - STT_MODEL_SIZE=${STT_MODEL_SIZE:-large-v3-turbo}
+      - STT_DEVICE=${STT_DEVICE:-cuda}
+      - STT_COMPUTE_TYPE=${STT_COMPUTE_TYPE:-float16}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - agent-network
+    restart: unless-stopped
+
+networks:
+  agent-network:
+    driver: bridge
+
+volumes:
+  tts-model-cache:
+  stt-model-cache:
